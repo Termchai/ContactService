@@ -25,7 +25,7 @@ import javax.xml.bind.JAXBElement;
 
 import contact.entity.Contact;
 import contact.service.ContactDao;
-import contact.service.DaoFactory;
+import contact.service.mem.MemDaoFactory;
 
 @Path("/contacts")
 /**
@@ -35,7 +35,7 @@ import contact.service.DaoFactory;
  */
 public class ContactResource {
 	/* Dao (database by arraylist! */
-	ContactDao dao = DaoFactory.getInstance().getContactDao();
+	ContactDao dao = MemDaoFactory.getInstance().getContactDao();
 	
 	@Context
 	UriInfo uriInfo;
@@ -121,6 +121,7 @@ public class ContactResource {
 	@Path("{id}")
 	public Response put(@PathParam("id") String id, JAXBElement<Contact> element) throws URISyntaxException
 	{
+		System.out.println("Updateeeeeeeeeeeeeeeeeeeee");
 		Contact contact = element.getValue();
 		contact.setId(Long.parseLong(id));
 		dao.update(contact);
