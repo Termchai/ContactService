@@ -77,7 +77,7 @@ public class ContactResource {
 			
 			for (Contact c : daoList)
 			{
-				if (c.getTitle().contains(qstr))
+				if (c.getTitle().toLowerCase().contains(qstr.toLowerCase()))
 					list.add(c);
 			}
 			

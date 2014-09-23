@@ -106,8 +106,11 @@ public class Contact implements Serializable {
 		if (! isEmpty( update.getTitle()) ) this.setTitle(update.getTitle()); // empty nickname is ok
 		// other attributes: allow an empty string as a way of deleting an attribute in update (this is hacky)
 		if (update.getName() != null ) this.setName(update.getName()); 
+		else this.setName("");
 		if (update.getEmail() != null) this.setEmail(update.getEmail());
+		else this.setEmail("");
 		if (update.getPhotoUrl() != null) this.setPhotoUrl(update.getPhotoUrl());
+		else this.setPhotoUrl("");
 	}
 	
 	/**

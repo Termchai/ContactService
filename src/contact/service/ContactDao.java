@@ -40,6 +40,7 @@ public class ContactDao {
 		return null;
 	}
 
+
 	public List<Contact> findAll() {
 		return java.util.Collections.unmodifiableList(contacts);
 	}
