@@ -1,3 +1,4 @@
+package main;
 
 
 import javax.servlet.Servlet;
@@ -65,6 +66,7 @@ public class JettyMain {
 	 * On Ubuntu or MacOS if you are not root then you must use a port > 1024.
 	 */
 	static final int PORT = 8080;
+	static Server server;
 
 	/**
 	 * Create a Jetty server and a context, add Jetty ServletContainer
@@ -76,7 +78,7 @@ public class JettyMain {
 	 */
 	public static void main(String[] args) throws Exception {
 		int port = PORT;  // the port thex server will listen to for HTTP requests
-		Server server = new Server( port );
+		server = new Server( port );
 		
 		// (1) Use a ServletContextHandler to hold a "context" (our application)
 		// that will be deployed on the server.
@@ -123,5 +125,56 @@ public class JettyMain {
 		server.stop();
 	}
 	
+	public static String run() throws Exception
+	{
+		int port = PORT;  // the port thex server will listen to for HTTP requests
+		Server server = new Server( port );
+		
+		// (1) Use a ServletContextHandler to hold a "context" (our application)
+		// that will be deployed on the server.
+		// The parameter is a bitwise "or" of options, defined in ServletContextHandler.
+		// Options are: SESSIONS, NO_SESSIONS, SECURITY, NO_SECURITY
+		ServletContextHandler context = new ServletContextHandler( ServletContextHandler.SESSIONS );
+		
+		// (2) Define the path that server should map to our context.
+		// If you use "/" it means the server root.
+//		context.setContextPath("/ske");
+		
+		// (3) Add servlets and mapping of requests to requests to servlets to the ContextHandler.
+		// The ServletContextHandler class gives you several ways to do this:
+		// To add a Servlet class and its pathspec:
+		//    context.addServlet( Class<? extends Servlet> clazz, String pathspec )
+		// To add an object (a ServletHolder):
+		//    context.addServlet( ServletHolder servletHolder, String pathspec )
+		
+		// A Jetty ServletHolder holds a javax.servlet.Servlet instance along with a name, 
+		// initialization parameters, and state information.  It implements the ServletConfig interface.
+		// Here we use a ServletHolder to hold a Jersey ServletContainer.
+		ServletHolder holder = new ServletHolder( org.glassfish.jersey.servlet.ServletContainer.class );
+		
+		// (4) Configure the Jersey ServletContainer so it will manage our resource
+		// classes and pass HTTP requests to our resources.
+		// Do this by setting initialization parameters.
+		// The ServletContainer javadoc tells you what the initialization parameter are.
+		// This initialization parameter tells Jersey to auto-configure all resource classes
+		// in the named package(s). 
+		holder.setInitParameter(ServerProperties.PROVIDER_PACKAGES, "contact.resource");
+		context.addServlet( holder, "/*" );
+		
+
+		// (5) Add the context (our application) to the Jetty server
+		server.setHandler( context );
+		
+		System.out.println("Starting Jetty server on port " + port);
+		server.start();
+		return server.getURI().toString();
+	}
+	
+	public static void close() throws Exception
+	{
+		System.out.println("Stopping server.");
+		DaoFactory.getInstance().shutdown();
+		server.stop();
+	}
 }
 

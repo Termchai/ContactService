@@ -1,11 +1,10 @@
-package contact.service.mem;
+package contact.entity;
 
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import contact.entity.Contact;
 /**
  * Contact XML Form
  * @author Termchai Sadsaengchan 5510546042

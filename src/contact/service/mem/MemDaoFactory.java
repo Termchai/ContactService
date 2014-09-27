@@ -9,6 +9,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import contact.entity.Contact;
+import contact.entity.ContactList;
 import contact.service.ContactDao;
 import contact.service.DaoFactory;
 

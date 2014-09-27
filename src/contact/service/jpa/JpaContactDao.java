@@ -1,4 +1,4 @@
-package contact.service;
+package contact.service.jpa;
 
 import java.util.*;
 import javax.persistence.EntityExistsException;

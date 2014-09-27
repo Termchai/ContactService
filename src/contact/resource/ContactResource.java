@@ -121,11 +121,12 @@ public class ContactResource {
 	@Path("{id}")
 	public Response put(@PathParam("id") String id, JAXBElement<Contact> element) throws URISyntaxException
 	{
-		System.out.println("Updateeeeeeeeeeeeeeeeeeeee");
+		if (dao.find(Long.parseLong(id)) == null) return Response.status(Status.BAD_REQUEST).build();
 		Contact contact = element.getValue();
 		contact.setId(Long.parseLong(id));
 		dao.update(contact);
-		return Response.created(new URI("http://localhost:8080/contacts/" + contact.getId())).build();
+		return Response.ok().build();
+		
 	}
 	
 	/**
@@ -134,9 +135,10 @@ public class ContactResource {
 	 */
 	@DELETE
 	@Path("{id}")
-	public void delete(@PathParam("id") Long id)
+	public Response delete(@PathParam("id") Long id)
 	{
 		dao.delete(id);
+		return Response.ok().build();
 	}
 
 }
