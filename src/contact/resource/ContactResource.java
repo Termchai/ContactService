@@ -9,6 +9,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -16,6 +17,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -47,12 +49,20 @@ public class ContactResource {
 	 */
 	@GET
 	@Path("{id}")
-	public Response getContactById(@PathParam("id") String id)
+	public Response getContactById(@PathParam("id") String id, @HeaderParam ("If-None-Match") String none_match, @HeaderParam ("If-Match") String match)
 	{
 		Contact c = dao.find(Long.parseLong(id));
+		
 		if (c==null)
+		{
 			return Response.status(Status.NOT_FOUND).build();
-		return Response.ok(c).build();
+		}
+		if (none_match != null && none_match.equals("\""+c.hashCode()+"\"") || match != null && !match.equals("\""+c.hashCode()+"\""))
+		{
+			return Response.status(Status.NOT_MODIFIED).build();
+		}
+		
+		return Response.ok(c).tag(new EntityTag(c.hashCode()+"")).build();
 	}
 	
 	/**
@@ -105,7 +115,7 @@ public class ContactResource {
 		if (dao.find(contact.getId()) != null)
 			return Response.status(Status.CONFLICT).build();
 		dao.save( contact );
-		return Response.created(new URI("http://localhost:8080/contacts/" + contact.getId())).build();
+		return Response.created(new URI("http://localhost:8080/contacts/" + contact.getId())).tag(new EntityTag(""+contact.hashCode())).build();
 	}
 	
 	
@@ -119,9 +129,22 @@ public class ContactResource {
 	@PUT
 	@Consumes( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
 	@Path("{id}")
-	public Response put(@PathParam("id") String id, JAXBElement<Contact> element) throws URISyntaxException
+	public Response put(@PathParam("id") String id, JAXBElement<Contact> element,@HeaderParam ("If-None-Match") String none_match, @HeaderParam ("If-Match") String match) throws URISyntaxException
 	{
 		if (dao.find(Long.parseLong(id)) == null) return Response.status(Status.BAD_REQUEST).build();
+		Contact c = dao.find(Long.parseLong(id));
+		
+		if (match != null)
+		{
+			if (!match.equals("\"" + c.hashCode() + "\""))
+				return Response.status(Status.PRECONDITION_FAILED).build();
+		}
+		
+		if (none_match != null)
+		{
+			if (!none_match.equals("\"" + c.hashCode() + "\""))
+				return Response.status(Status.PRECONDITION_FAILED).build();
+		}
 		Contact contact = element.getValue();
 		contact.setId(Long.parseLong(id));
 		dao.update(contact);
@@ -135,8 +158,11 @@ public class ContactResource {
 	 */
 	@DELETE
 	@Path("{id}")
-	public Response delete(@PathParam("id") Long id)
+	public Response delete(@PathParam("id") Long id, @HeaderParam ("If-None-Match") String none_match, @HeaderParam ("If-Match") String match)
 	{
+		Contact c = dao.find(id);
+		if(match != null && !match.equals("\"" + c.hashCode() + "\"")) return Response.status(Status.PRECONDITION_FAILED).build();
+		
 		dao.delete(id);
 		return Response.ok().build();
 	}

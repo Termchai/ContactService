@@ -130,4 +130,10 @@ public class Contact implements Serializable {
 	private static boolean isEmpty(String arg) {
 		return arg == null || arg.matches("\\s*") ;
 	}
+
+	@Override
+	public int hashCode() {
+		return (id+name+title+email+photoUrl).hashCode();
+	}
+
 }
