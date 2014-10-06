@@ -1,3 +1,4 @@
+//ERROR: package names in this project should start with "contact."
 package main;
 
 

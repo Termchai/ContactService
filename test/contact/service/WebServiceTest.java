@@ -18,10 +18,11 @@ import org.eclipse.jetty.http.HttpMethod;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
+// No Javadoc
 public class WebServiceTest {
 	private static String serviceUrl;
 	private static HttpClient client;
+// No blank lines between methods.
 	@BeforeClass
 	public static void doFirst( ) throws Exception {
 		
@@ -51,6 +52,7 @@ public class WebServiceTest {
 			  */
 			 @Test
 			 public void testGetPass() throws InterruptedException, ExecutionException, TimeoutException  {
+//ERROR: assumes id 1001 exists, but the test suite didn't add it.
 				 ContentResponse res = client.GET(serviceUrl+"contacts/1001");
 				 assertEquals("Response should be 200 OK", Status.OK.getStatusCode(), res.getStatus());
 				 assertTrue("Content exist!", !res.getContentAsString().isEmpty());
@@ -90,7 +92,9 @@ public class WebServiceTest {
 				
 				 assertEquals("POST complete ,should response 201 Created", Status.CREATED.getStatusCode(), res.getStatus());
 				 res = client.GET(serviceUrl+"contacts/123");
+// ERROR: create a new contact doesn't have to return request body
 				 assertTrue("Content Exist", !res.getContentAsString().isEmpty() );
+// You should check that Location: header was returned, then GET it.
 			 }
 			 
 			 /**

@@ -1,0 +1,6 @@
+.class
+*.war
+.DS_STORE
+bin/
+lib/
+

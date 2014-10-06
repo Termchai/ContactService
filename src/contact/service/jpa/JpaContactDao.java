@@ -66,6 +66,7 @@ public class JpaContactDao implements ContactDao {
 	@Override
 	public List<Contact> findAll() {
 		Query query = em.createQuery("SELECT c FROM Contact c");
+//STOP USING BAD VARIABLE NAMES!  "list" or "contacts" but not "lst".
 		List lst = query.getResultList();
 		return lst;
 	}
@@ -99,6 +100,7 @@ public class JpaContactDao implements ContactDao {
 			return false;
 		}
 		em.remove(contact);
+//ERROR no try catch rollback
 		tx.commit();
 		//TODO implement this.  See save for example
 		return true;
@@ -133,7 +135,8 @@ public class JpaContactDao implements ContactDao {
 		Contact contact = em.find(Contact.class,update.getId());
 		em.merge(update);
 		em.getTransaction().commit();
-		
+//ERROR no try catch rollback
+//ERROR wrong return value!
 		return false;
 	}
 }

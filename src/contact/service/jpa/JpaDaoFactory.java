@@ -49,6 +49,7 @@ public class JpaDaoFactory extends DaoFactory {
 			if (em != null && em.isOpen()) em.close();
 			if (emf != null && emf.isOpen()) emf.close();
 		} catch (IllegalStateException ex) {
+// This is a USELESS message.
 			logger.log(Level.SEVERE, "Error!!!!!");
 		}
 	}

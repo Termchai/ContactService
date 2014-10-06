@@ -55,8 +55,10 @@ private ContactDao daoInstance;
 			
 			Marshaller marshaller = ctx.createMarshaller();
 			List<Contact> list = getContactDao().findAll();
+// "cl" is poor name.
 			ContactList cl = new ContactList();
 			cl.setList(list);
+//ERROR: This will fail on a machine not running Windows or doesn't have D: disk!
 			marshaller.marshal(cl, new File("D:\\TestMarshall.xml"));
 
 		} catch (JAXBException e) 

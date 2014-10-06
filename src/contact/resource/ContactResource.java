@@ -27,13 +27,16 @@ import contact.entity.Contact;
 import contact.service.ContactDao;
 import contact.service.mem.MemDaoFactory;
 
-@Path("/contacts")
+// This comment is insufficient.
+// It doesn't tell the programmer anything that is not OBVIOUS already from the code!
 /**
  * handle path "contacts" from JettyMain
  * @author Termchai Sadsaengchan 5510546042
  *
  */
+@Path("/contacts")
 public class ContactResource {
+// Don't use MemDaoFactory. Use abstract DaoFactory.
 	/* Dao (database by arraylist! */
 	ContactDao dao = MemDaoFactory.getInstance().getContactDao();
 	
@@ -47,6 +50,7 @@ public class ContactResource {
 	 */
 	@GET
 	@Path("{id}")
+// Should be long, not String
 	public Response getContactById(@PathParam("id") String id)
 	{
 		Contact c = dao.find(Long.parseLong(id));
@@ -65,6 +69,7 @@ public class ContactResource {
 	 */
 	@GET
 	@Produces (MediaType.APPLICATION_XML)
+// Should be "title" not "q"
 	public Response getContact( @QueryParam("q") String qstr )
 	{
 		GenericEntity<List<Contact>> entity;
@@ -72,11 +77,13 @@ public class ContactResource {
 			entity = new GenericEntity<List<Contact>>(dao.findAll()) {};
 		else
 		{
+// Inefficient. Let the DAO query for only the contacts you want. dao.findByTitle
 			List<Contact> daoList = dao.findAll();
 			List<Contact> list = new ArrayList<Contact>();
 			
 			for (Contact c : daoList)
 			{
+// Inefficient duplicate c.getTitle().toLowerCase()
 				if (c.getTitle().toLowerCase().contains(qstr.toLowerCase()))
 					list.add(c);
 			}
@@ -104,7 +111,10 @@ public class ContactResource {
 		Contact contact = element.getValue();
 		if (dao.find(contact.getId()) != null)
 			return Response.status(Status.CONFLICT).build();
+// Should check returnn value from save
 		dao.save( contact );
+//ERROR: Don't assume the contact path. Use uriInfo.
+// Why did you bother to add uriInfo as parameter???
 		return Response.created(new URI("http://localhost:8080/contacts/" + contact.getId())).build();
 	}
 	
@@ -137,6 +147,7 @@ public class ContactResource {
 	@Path("{id}")
 	public Response delete(@PathParam("id") Long id)
 	{
+//ERROR: may return incorrect "OK".
 		dao.delete(id);
 		return Response.ok().build();
 	}
